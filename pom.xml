@@ -23,6 +23,7 @@
         <jsr.version>2.13.3</jsr.version>
         <javax.validation.version>2.0.0.Alpha1</javax.validation.version>
         <springdoc-openapi-ui.version>1.6.7</springdoc-openapi-ui.version>
+        <json-simple>1.1.1</json-simple>
     </properties>
 
     <dependencies>
@@ -72,13 +73,28 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-            <version>2.0.0.Alpha1</version>
+            <version>2.0.1.final</version>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>${springdoc-openapi-ui.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>${json-simple}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.1.6.Final</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -1,16 +1,15 @@
 package com.edu.ulab.app.web.response;
 
+
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @Builder
-public class UserBookResponse {
+public class BookResponse {
+    private Long id;
     private Long userId;
-    private String fullName;
     private String title;
-    private int age;
-    private List<Long> booksIdList;
+    private String author;
+    private long pageCount;
 }
