@@ -33,7 +33,7 @@ public class UserController {
     @PostMapping(value = "/create")
     @Operation(summary = "Create user book row.",
             responses = {
-                    @ApiResponse(description = "User book",
+                    @ApiResponse(description = "Person book",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = UserBookResponse.class)))})
     public UserBookResponse createUserWithBooks(@Valid @RequestBody UserBookRequest request,
@@ -46,7 +46,7 @@ public class UserController {
     @PutMapping(value = "/update/{id}")
     @Operation(summary = "Update user book row.",
             responses = {
-                    @ApiResponse(description = "User book",
+                    @ApiResponse(description = "Person book",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = UserBookResponse.class)))})
     public UserBookResponse updateUserWithBooks(@RequestBody UserBookRequest request, @PathVariable long id) {
@@ -58,7 +58,7 @@ public class UserController {
     @GetMapping(value = "/get/{userId}")
     @Operation(summary = "Get user book row.",
             responses = {
-                    @ApiResponse(description = "User book",
+                    @ApiResponse(description = "Person book",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = UserBookResponse.class)))})
     public UserBookResponse getUserWithBooks(@PathVariable Long userId) {
@@ -70,7 +70,7 @@ public class UserController {
     @DeleteMapping(value = "/delete/{userId}")
     @Operation(summary = "Delete user book row.",
             responses = {
-                    @ApiResponse(description = "User book",
+                    @ApiResponse(description = "Person book",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = UserBookResponse.class)))})
     public void deleteUserWithBooks(@PathVariable Long userId) {

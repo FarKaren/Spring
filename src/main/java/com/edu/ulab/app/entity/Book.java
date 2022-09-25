@@ -1,25 +1,30 @@
 package com.edu.ulab.app.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class Book {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonProperty("userid")
-    private Long userId;
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH,
+            CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "USER_ID")
+    private Person person;
 
     private String title;
 
     private String author;
 
-    @JsonProperty("pagecount")
-    private long pageCount;
+    private int pageCount;
 }

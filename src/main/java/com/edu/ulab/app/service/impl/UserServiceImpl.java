@@ -1,57 +1,69 @@
 package com.edu.ulab.app.service.impl;
 
 import com.edu.ulab.app.dto.UserDto;
-import com.edu.ulab.app.entity.User;
+import com.edu.ulab.app.entity.Person;
 import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.mapper.UserMapper;
+import com.edu.ulab.app.repository.BookRepository;
+import com.edu.ulab.app.repository.UserRepository;
 import com.edu.ulab.app.service.UserService;
-import com.edu.ulab.app.storage.Storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-
-import static com.edu.ulab.app.storage.generatorid.GeneratorUserId.userId;
 
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
     private final UserMapper mapper;
-    private final Storage storage;
+    private final UserRepository userRepository;
+    private final BookRepository bookRepository;
 
-    public UserServiceImpl(UserMapper mapper, Storage<User> storage) {
+    public UserServiceImpl(UserMapper mapper, UserRepository userRepository, BookRepository bookRepository) {
         this.mapper = mapper;
-        this.storage = storage;
+        this.userRepository = userRepository;
+        this.bookRepository = bookRepository;
     }
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        if(userDto.getId() != null)
-            return updateUser(userDto);
+        Person person = mapper.userDtoToPerson(userDto);
+        Person savedPerson = userRepository.save(person);
+        log.info("Save user in data base {}", savedPerson);
 
-        User user = mapper.userDtoToUser(userDto);
-        user.setId(userId());
-        User savedUser = (User) storage.save(user);
-        return mapper.userToUserDto(savedUser);
+        return mapper.personToUserDto(savedPerson);
     }
 
     @Override
     public UserDto updateUser(UserDto userDto) {
-        User user = mapper.userDtoToUser(userDto);
-        User savedUser = (User) Optional.ofNullable(storage.update(user))
+        Person foundPerson = userRepository.findById(userDto.getId())
                 .orElseThrow(() -> new NotFoundException("User not found"));
-        return mapper.userToUserDto(savedUser);
+        foundPerson.setFullName(userDto.getFullName());
+        foundPerson.setTitle(userDto.getTitle());
+        foundPerson.setAge(userDto.getAge());
+
+        Person savedPerson = userRepository.save(foundPerson);
+        log.info("Update user in data base {}", savedPerson);
+
+        return  mapper.personToUserDto(savedPerson);
     }
 
     @Override
     public UserDto getUserById(Long id) {
-        User user = (User) Optional.ofNullable(storage.find(id))
+        Person foundPerson = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found"));
-        return mapper.userToUserDto(user);
+        log.info("Get user from data base {}", foundPerson);
+
+        return mapper.personToUserDto(foundPerson);
     }
 
     @Override
     public void deleteUserById(Long id) {
-       storage.delete(id);
+        Person foundPerson = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        foundPerson.getBooks().forEach(bookRepository::delete);
+        log.info("Delete all user books");
+
+        userRepository.delete(foundPerson);
+        log.info("Delete user from data base");
     }
+
 }

@@ -6,17 +6,23 @@ import com.edu.ulab.app.mapper.BookMapper;
 import com.edu.ulab.app.mapper.UserMapper;
 import com.edu.ulab.app.service.BookService;
 import com.edu.ulab.app.service.UserService;
+import com.edu.ulab.app.service.impl.BookServiceImpl;
+import com.edu.ulab.app.service.impl.BookServiceImplTemplate;
+import com.edu.ulab.app.service.impl.UserServiceImpl;
+import com.edu.ulab.app.service.impl.UserServiceImplTemplate;
 import com.edu.ulab.app.web.request.BookRequest;
 import com.edu.ulab.app.web.response.BookResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
+@Transactional
 public class BookDataFacade {
 
     private final UserService userService;
@@ -24,8 +30,8 @@ public class BookDataFacade {
     private final UserMapper userMapper;
     private final BookMapper bookMapper;
 
-    public BookDataFacade(UserService userService,
-                          BookService bookService,
+    public BookDataFacade(UserServiceImplTemplate userService,
+                          BookServiceImplTemplate bookService,
                           UserMapper userMapper,
                           BookMapper bookMapper) {
         this.userService = userService;
@@ -83,7 +89,7 @@ public class BookDataFacade {
         log.info("Book deleted");
     }
 
-    private BookResponse buildBookResponse(BookDto bookDto){
+    private BookResponse buildBookResponse(BookDto bookDto) {
         return BookResponse.builder()
                 .id(bookDto.getId())
                 .userId(bookDto.getUserId())

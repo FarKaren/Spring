@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class UserBookRequest {
 
-    @NotNull(message = "User request can't be empty")
+    @NotNull(message = "Person request can't be empty")
     private UserRequest userRequest;
 
     private List<BookRequest> bookRequests;
