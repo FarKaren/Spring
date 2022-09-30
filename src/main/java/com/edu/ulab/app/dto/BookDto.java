@@ -8,5 +8,5 @@ public class BookDto {
     private Long userId;
     private String title;
     private String author;
-    private long pageCount;
+    private int pageCount;
 }
