@@ -4,7 +4,6 @@ import com.edu.ulab.app.dto.UserDto;
 import com.edu.ulab.app.entity.Person;
 import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.mapper.UserMapper;
-import com.edu.ulab.app.repository.BookRepository;
 import com.edu.ulab.app.repository.UserRepository;
 import com.edu.ulab.app.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,12 +14,12 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     private final UserMapper mapper;
     private final UserRepository userRepository;
-    private final BookRepository bookRepository;
 
-    public UserServiceImpl(UserMapper mapper, UserRepository userRepository, BookRepository bookRepository) {
+
+    public UserServiceImpl(UserMapper mapper, UserRepository userRepository) {
         this.mapper = mapper;
         this.userRepository = userRepository;
-        this.bookRepository = bookRepository;
+
     }
 
     @Override
@@ -59,9 +58,6 @@ public class UserServiceImpl implements UserService {
     public void deleteUserById(Long id) {
         Person foundPerson = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found"));
-        foundPerson.getBooks().forEach(bookRepository::delete);
-        log.info("Delete all user books");
-
         userRepository.delete(foundPerson);
         log.info("Delete user from data base");
     }

@@ -88,11 +88,6 @@ public class UserServiceImplTemplate implements UserService {
     @Override
     public void deleteUserById(Long id) {
         final String DELETE_USER_SQL = ("DELETE FROM PERSON WHERE ID = ?");
-        final String DELETE_BOOK_SQL = ("DELETE FROM BOOK WHERE USER_ID = ?");
-
-        jdbcTemplate.update(DELETE_BOOK_SQL, id);
-        log.info("Delete all user books");
-
         jdbcTemplate.update(DELETE_USER_SQL, id);
         log.info("Delete user from data base");
     }

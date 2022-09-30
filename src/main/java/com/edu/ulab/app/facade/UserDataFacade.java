@@ -91,6 +91,9 @@ public class UserDataFacade {
 
     public void deleteUserWithBooks(@NonNull Long userId) {
         log.info("Got user delete request: {}", userId);
+        List<Long> allUserBook = bookService.getBooksIdByUserId(userId);
+        allUserBook.forEach(bookService::deleteBookById);
+        log.info("Delete all user's book");
         userService.deleteUserById(userId);
         log.info("User deleted");
     }
