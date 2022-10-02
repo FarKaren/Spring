@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changes/v2022100102_create_sequence.yaml
+  - include:
+      file: db/changelog/changes/v2022200102_create_schema.yaml
+  - include:
+      file: db/changelog/changes/v2022062201__create_person_table.yaml
+  - include:
+      file: db/changelog/changes/v2022100102_create_index_person_title.yaml
+  - include:
+      file: db/changelog/changes/v2022062301__create_book_table.yaml
+  - include:
+      file: db/changelog/changes/v2022100102_add_foreign_key_book_table.yaml
+  - include:
+      file: db/changelog/changes/v2022100102_add_column_code_person.yaml
+
+
+

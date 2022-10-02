@@ -2,6 +2,8 @@ package com.edu.ulab.app.facade;
 
 
 import com.edu.ulab.app.dto.BookDto;
+import com.edu.ulab.app.dto.UserDto;
+import com.edu.ulab.app.entity.Person;
 import com.edu.ulab.app.mapper.BookMapper;
 import com.edu.ulab.app.mapper.UserMapper;
 import com.edu.ulab.app.service.BookService;
@@ -30,8 +32,8 @@ public class BookDataFacade {
     private final UserMapper userMapper;
     private final BookMapper bookMapper;
 
-    public BookDataFacade(UserServiceImplTemplate userService,
-                          BookServiceImplTemplate bookService,
+    public BookDataFacade(UserServiceImpl userService,
+                          BookServiceImpl bookService,
                           UserMapper userMapper,
                           BookMapper bookMapper) {
         this.userService = userService;
@@ -42,8 +44,11 @@ public class BookDataFacade {
 
     public BookResponse createBook(@NonNull BookRequest bookRequest, @NonNull Long userId) {
         log.info("Got  book create request: {}", bookRequest);
+
+        UserDto userDto = userService.getUserById(userId);
+        log.info("Person was found {}", userDto);
+
         BookDto bookDto = bookMapper.bookRequestToBookDto(bookRequest);
-        bookDto.setUserId(userId);
         log.info("Mapped book request: {}", bookDto);
 
         BookDto createdBook = bookService.createBook(bookDto);
@@ -54,8 +59,13 @@ public class BookDataFacade {
 
     public BookResponse updateBook(@NonNull BookRequest bookRequest, @NonNull Long userId, @NonNull Long bookId) {
         log.info("Got  book update request: {}", bookRequest);
+
+        UserDto userDto = userService.getUserById(userId);
+        Person foundPerson = userMapper.userDtoToPerson(userDto);
+        log.info("Mapped person: {}", userDto);
+
         BookDto bookDto = bookMapper.bookRequestToBookDto(bookRequest);
-        bookDto.setUserId(userId);
+        bookDto.setPerson(foundPerson);
         bookDto.setId(bookId);
         log.info("Mapped book request: {}", bookDto);
 
@@ -66,6 +76,9 @@ public class BookDataFacade {
     }
 
     public List<BookResponse> getBooksByUserId(@NonNull Long userId) {
+        UserDto userDto = userService.getUserById(userId);
+        log.info("Person was found {}", userDto);
+
         List<BookDto> books = bookService.getBooksByUserId(userId);
         log.info("Collected book: {}", books);
 
@@ -92,7 +105,7 @@ public class BookDataFacade {
     private BookResponse buildBookResponse(BookDto bookDto) {
         return BookResponse.builder()
                 .id(bookDto.getId())
-                .userId(bookDto.getUserId())
+                .userId(bookDto.getPerson().getId())
                 .title(bookDto.getTitle())
                 .author(bookDto.getAuthor())
                 .pageCount(bookDto.getPageCount())

@@ -11,20 +11,25 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "book", schema = "ulab_edu")
 public class Book {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequence")
+    @SequenceGenerator(name = "sequence", sequenceName = "sequence", allocationSize = 1)
     private Long id;
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH,
-            CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "USER_ID")
+            CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "PERSON_ID", nullable = false)
     private Person person;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String author;
 
-    private int pageCount;
+    @Column(nullable = false)
+    private long pageCount;
 }

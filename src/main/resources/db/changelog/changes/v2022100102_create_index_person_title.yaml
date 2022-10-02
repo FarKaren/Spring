@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_index_title
+      author: Karen
+      changes:
+        - createIndex:
+            indexName: idx_ulab_edu_person_title
+            schemaName: ulab_edu
+            tableName: person
+            unique: true
+            clustered: true
+            columns:
+              - column:
+                  name: title
+                  descending: true

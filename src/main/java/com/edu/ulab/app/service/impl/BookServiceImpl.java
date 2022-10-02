@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -31,25 +32,18 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto createBook(BookDto bookDto) {
-        Person foundPerson = userRepository.findById(bookDto.getUserId())
-                .orElseThrow(() -> new NotFoundException("User not found"));
-
+        Person person = userRepository.findById(bookDto.getPerson().getId())
+                .orElseThrow(() -> new NoSuchElementException("Person not found"));
         Book book = mapper.bookDtoToBook(bookDto);
-        book.setPerson(foundPerson);
+        book.setPerson(person);
         Book savedBook = bookRepository.save(book);
         log.info("Save book in data base {}", savedBook);
 
-        foundPerson.addBook(book);
-        Person savedPersonWithBook = userRepository.save(foundPerson);
-        log.info("Save user with book {}", savedPersonWithBook);
-
-        return convertBookToBookDto(savedBook, foundPerson.getId());
+        return mapper.bookToBookDto(savedBook);
     }
 
     @Override
     public BookDto updateBook(BookDto bookDto) {
-        Person foundPerson = userRepository.findById(bookDto.getUserId())
-                .orElseThrow(() -> new NotFoundException("User not found"));
         Book foundBook = bookRepository.findById(bookDto.getId())
                 .orElseThrow(() -> new NotFoundException("Book not found"));
 
@@ -60,7 +54,7 @@ public class BookServiceImpl implements BookService {
         Book savedBook = bookRepository.save(foundBook);
         log.info("Update book in data base {}", savedBook);
 
-        return convertBookToBookDto(savedBook, foundPerson.getId());
+        return mapper.bookToBookDto(savedBook);
     }
 
     @Override
@@ -69,23 +63,13 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new NotFoundException("Book not found"));
         log.info("Get user from data base {}", foundBook);
 
-        return convertBookToBookDto(foundBook, foundBook.getPerson().getId());
+        return mapper.bookToBookDto(foundBook);
 
-    }
-
-    @Override
-    public void deleteBookById(Long id) {
-        Book foundBook = bookRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Book not found"));
-        log.info("Book deleted from data base {}", foundBook);
-        bookRepository.delete(foundBook);
     }
 
     @Override
     public List<Long> getBooksIdByUserId(long id) {
-        Person foundPerson = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found"));
-        List<Book> foundBooks = bookRepository.getBooksByUserId(id)
+        List<Book> foundBooks = bookRepository.findBooksByUserId(id)
                 .orElseThrow(() -> new NotFoundException("Books not found"));
         log.info("Get books from data base");
 
@@ -97,22 +81,22 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookDto> getBooksByUserId(long id) {
-        Person foundPerson = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found"));
-        List<Book> foundBooks = bookRepository.getBooksByUserId(id)
+        List<Book> foundBooks = bookRepository.findBooksByUserId(id)
                 .orElseThrow(() -> new NotFoundException("Books not found"));
         log.info("Get books from data base");
 
         return foundBooks.stream()
                 .filter(Objects::nonNull)
-                .map(book -> convertBookToBookDto(book, foundPerson.getId()))
+                .map(mapper::bookToBookDto)
                 .collect(Collectors.toList());
     }
 
-    private BookDto convertBookToBookDto(Book book, Long userId){
-        BookDto bookDto = mapper.bookToBookDto(book);
-        bookDto.setUserId(userId);
-        return bookDto;
-    }
 
+    @Override
+    public void deleteBookById(Long id) {
+        Book foundBook = bookRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Book not found"));
+        log.info("Book deleted from data base {}", foundBook);
+        bookRepository.delete(foundBook);
+    }
 }

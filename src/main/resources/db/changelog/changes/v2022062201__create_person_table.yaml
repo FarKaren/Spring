@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_person_table
+      author: Karen
+      changes:
+        - createTable:
+            schemaName: ulab_edu
+            tableName: person
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: full_name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: age
+                  type: int
+                  constraints:
+                    nullable: false
+
+
+

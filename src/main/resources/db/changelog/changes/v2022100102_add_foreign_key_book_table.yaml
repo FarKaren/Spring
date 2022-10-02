@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_foreign_key_book-person
+      author: Karen
+      changes:
+        - addForeignKeyConstraint:
+            baseTableSchemaName: ulab_edu
+            baseColumnNames: person_id
+            baseTableName: book
+            constraintName: fk_book_person
+            referencedTableSchemaName: ulab_edu
+            referencedColumnNames: id
+            referencedTableName: person

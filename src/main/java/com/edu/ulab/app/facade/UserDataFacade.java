@@ -30,8 +30,8 @@ public class UserDataFacade {
     private final UserMapper userMapper;
     private final BookMapper bookMapper;
 
-    public UserDataFacade(UserServiceImplTemplate userService,
-                          BookServiceImplTemplate bookService,
+    public UserDataFacade(UserServiceImpl userService,
+                          BookServiceImpl bookService,
                           UserMapper userMapper,
                           BookMapper bookMapper) {
         this.userService = userService;
@@ -53,7 +53,7 @@ public class UserDataFacade {
                     .stream()
                     .filter(Objects::nonNull)
                     .map(bookMapper::bookRequestToBookDto)
-                    .peek(bookDto -> bookDto.setUserId(createdUser.getId()))
+                    .peek(bookDto -> bookDto.setPerson(userMapper.userDtoToPerson(createdUser)))
                     .peek(mappedBookDto -> log.info("mapped book: {}", mappedBookDto))
                     .map(bookService::createBook)
                     .peek(createdBook -> log.info("Created book: {}", createdBook))

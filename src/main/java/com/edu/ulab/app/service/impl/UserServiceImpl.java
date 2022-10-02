@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService {
         foundPerson.setFullName(userDto.getFullName());
         foundPerson.setTitle(userDto.getTitle());
         foundPerson.setAge(userDto.getAge());
+        foundPerson.setCode(userDto.getCode());
 
         Person savedPerson = userRepository.save(foundPerson);
         log.info("Update user in data base {}", savedPerson);
