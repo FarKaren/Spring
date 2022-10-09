@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_column_count
+      author: Karen
+      changes:
+        - addColumn:
+            schemaName: ulab_edu
+            tableName: person
+            columns:
+              - column:
+                  name: code
+                  type: int
+                  constraints:
+                    nullable: false

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_schema_ulab_edu
+      author: Karen
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            sql: create schema ulab_edu
+

@@ -12,6 +12,6 @@ import java.util.Optional;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-    @Query(value = "SELECT * FROM BOOK WHERE USER_ID = :id", nativeQuery = true)
-    Optional<List<Book>> getBooksByUserId(long id);
+    @Query(value = "select * from ulab_edu.book where person_id = ?", nativeQuery = true)
+    Optional<List<Book>> findBooksByUserId(long id);
 }

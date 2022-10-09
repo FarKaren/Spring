@@ -1,11 +1,12 @@
 package com.edu.ulab.app.dto;
 
+import com.edu.ulab.app.entity.Person;
 import lombok.Data;
 
 @Data
 public class BookDto {
     private Long id;
-    private Long userId;
+    private Person person;
     private String title;
     private String author;
     private int pageCount;

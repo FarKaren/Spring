@@ -5,8 +5,6 @@ import com.edu.ulab.app.entity.Person;
 import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.mapper.UserMapper;
 import com.edu.ulab.app.service.UserService;
-import com.edu.ulab.app.service.impl.find_person.FindPerson;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -32,7 +30,7 @@ public class UserServiceImplTemplate implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        final String INSERT_SQL = "INSERT INTO PERSON(FULL_NAME, TITLE, AGE) VALUES(?,?,?)";
+        final String INSERT_SQL = "INSERT INTO PERSON(FULL_NAME, TITLE, AGE, CODE) VALUES(?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         try {
             jdbcTemplate.update(
@@ -42,6 +40,7 @@ public class UserServiceImplTemplate implements UserService {
                         ps.setString(1, userDto.getFullName());
                         ps.setString(2, userDto.getTitle());
                         ps.setLong(3, userDto.getAge());
+                        ps.setInt(4, userDto.getCode());
                         return ps;
                     }, keyHolder);
         }catch (DataAccessException e) {
@@ -55,11 +54,10 @@ public class UserServiceImplTemplate implements UserService {
 
     @Override
     public UserDto updateUser(UserDto userDto) {
-        final String UPDATE_SQL = ("UPDATE PERSON SET FULL_NAME = ?, TITLE = ?, AGE = ? WHERE ID = ?");
-        FindPerson.personIsExist(userDto.getId(), jdbcTemplate);
+        final String UPDATE_SQL = ("UPDATE PERSON SET FULL_NAME = ?, TITLE = ?, AGE = ?, CODE = ?, WHERE ID = ?");
         try {
             jdbcTemplate.update(UPDATE_SQL, userDto.getFullName(), userDto.getTitle(),
-                    userDto.getAge(), userDto.getId());
+                    userDto.getAge(), userDto.getId(), userDto.getCode());
         }catch (DataAccessException e){
             throw new RuntimeException(e.getMessage());
         }

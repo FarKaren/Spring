@@ -2,12 +2,10 @@ package com.edu.ulab.app.service.impl;
 
 import com.edu.ulab.app.dto.BookDto;
 import com.edu.ulab.app.entity.Book;
-import com.edu.ulab.app.entity.Person;
 import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.mapper.BookMapper;
 import com.edu.ulab.app.mapper.BookRowMapper;
 import com.edu.ulab.app.service.BookService;
-import com.edu.ulab.app.service.impl.find_person.FindPerson;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -35,8 +33,7 @@ public class BookServiceImplTemplate implements BookService {
 
     @Override
     public BookDto createBook(BookDto bookDto) {
-        final String INSERT_SQL = "INSERT INTO BOOK(TITLE, AUTHOR, PAGE_COUNT, USER_ID) VALUES (?,?,?,?)";
-        FindPerson.personIsExist(bookDto.getUserId(), jdbcTemplate);
+        final String INSERT_SQL = "INSERT INTO BOOK(TITLE, AUTHOR, PAGE_COUNT, PERSON_ID) VALUES (?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         try {
             jdbcTemplate.update(
@@ -46,7 +43,7 @@ public class BookServiceImplTemplate implements BookService {
                         ps.setString(1, bookDto.getTitle());
                         ps.setString(2, bookDto.getAuthor());
                         ps.setLong(3, bookDto.getPageCount());
-                        ps.setLong(4, bookDto.getUserId());
+                        ps.setLong(4, bookDto.getPerson().getId());
                         return ps;
                     }, keyHolder);
         }catch (DataAccessException e){
@@ -59,12 +56,11 @@ public class BookServiceImplTemplate implements BookService {
 
     @Override
     public BookDto updateBook(BookDto bookDto) {
-        final String UPDATE_SQL = "UPDATE BOOK SET TITLE = ?, AUTHOR = ?, PAGE_COUNT = ?, USER_ID = ? WHERE ID = ?";
-        FindPerson.personIsExist(bookDto.getUserId(), jdbcTemplate);
+        final String UPDATE_SQL = "UPDATE BOOK SET TITLE = ?, AUTHOR = ?, PAGE_COUNT = ?, PERSON_ID = ? WHERE ID = ?";
         BookDto checkIfExist = getBookById(bookDto.getId());
         try {
             jdbcTemplate.update(UPDATE_SQL, bookDto.getTitle(), bookDto.getAuthor(), bookDto.getPageCount(),
-                    bookDto.getUserId(), bookDto.getId());
+                    bookDto.getPerson().getId(), bookDto.getId());
         }catch (DataAccessException e){
             throw new RuntimeException(e.getMessage());
         }
@@ -87,7 +83,7 @@ public class BookServiceImplTemplate implements BookService {
             throw new NotFoundException("Book not found");
         log.info("Get book from data base");
 
-        return convertBookToBookDto(foundBook, foundBook.getPerson().getId());
+        return mapper.bookToBookDto(foundBook);
     }
 
     @Override
@@ -99,8 +95,7 @@ public class BookServiceImplTemplate implements BookService {
 
     @Override
     public List<Long> getBooksIdByUserId(long id) {
-        final String GET_LIST_SQL = "SELECT * FROM BOOK WHERE USER_ID = ?";
-        FindPerson.personIsExist(id, jdbcTemplate);
+        final String GET_LIST_SQL = "SELECT * FROM BOOK WHERE PERSON_ID = ?";
         List<Book> foundBooks = getBookList(GET_LIST_SQL, id);
         log.info("Get books from data base");
 
@@ -112,22 +107,16 @@ public class BookServiceImplTemplate implements BookService {
 
     @Override
     public List<BookDto> getBooksByUserId(long id) {
-        final String GET_LIST_SQL = "SELECT * FROM BOOK WHERE USER_ID = ?";
-        FindPerson.personIsExist(id, jdbcTemplate);
+        final String GET_LIST_SQL = "SELECT * FROM BOOK WHERE PERSON_ID = ?";
         List<Book> foundBooks = getBookList(GET_LIST_SQL, id);
         log.info("Get books from data base");
 
         return foundBooks.stream()
                 .filter(Objects::nonNull)
-                .map(book -> convertBookToBookDto(book, book.getPerson().getId()))
+                .map(mapper::bookToBookDto)
                 .collect(Collectors.toList());
     }
 
-    private BookDto convertBookToBookDto(Book book, Long userId) {
-        BookDto bookDto = mapper.bookToBookDto(book);
-        bookDto.setUserId(userId);
-        return bookDto;
-    }
 
     private List<Book> getBookList(@NonNull String sqlQuery, @NonNull Long id){
         List<Book> bookList;

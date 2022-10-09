@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_book_table
+      author: Karen
+      changes:
+        - createTable:
+            schemaName: ulab_edu
+            tableName: book
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: person_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: page_count
+                  type: int
+                  constraints:
+                    nullable: false

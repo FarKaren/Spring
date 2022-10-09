@@ -14,11 +14,18 @@ management:
         include: health,info
 spring:
   jpa:
+    liquibase:
+      enabled: true
     database: POSTGRESQL
     show-sql: true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
+      use-new-id-generator-mappings: false
+    properties:
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQL81Dialect
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
